@@ -87,18 +87,35 @@ public class Hero
 
         if (potion.GetPotionType() == PotionType.Heal)
         {
+            if (health == 100)
+            {
+                Console.WriteLine("Ваше здоров'я вже повне. Ви не можете використати зілля зцілення.");
+                return;
+            }
             Health += 50;
             Console.WriteLine($"{name} використав зілля зцілення і відновив 50 здоров'я. Поточне здоров'я: {health}");
         }
         else if (potion.GetPotionType() == PotionType.Strength)
         {
+            if (strengthUsed)
+            {
+                Console.WriteLine("Ви вже використали зілля сили. Ефект не може складатися.");
+                return;
+            }
             attackPower += 15;
             Console.WriteLine($"{name} використав зілля сили і збільшив атаку на 15. Поточна атака: {attackPower}");
+            strengthUsed = true;
         }
         else if (potion.GetPotionType() == PotionType.Defense)
         {
+            if (defenseUsed)
+            {
+                Console.WriteLine("Ви вже використали зілля захисту. Ефект не може складатися.");
+                return;
+            }
             defense += 10;
             Console.WriteLine($"{name} використав зілля захисту і збільшив захист на 10. Поточний захист: {defense}");
+            defenseUsed = true;
         }
         else
         {
