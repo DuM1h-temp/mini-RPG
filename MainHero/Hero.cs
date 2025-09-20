@@ -5,15 +5,31 @@ namespace mini_RPG;
 
 public class Hero
 {
+    private int location = 1;
+    private int monstersDefeated = 0;
+    public int GetMonstersDefeated() { return monstersDefeated; }
+    public int GetLocation() { return location; }
+
     public bool strengthUsed = false;
     public bool defenseUsed = false;
+
+    private bool poisoned = false;
+    public bool IsPoisoned() { return poisoned; }
+    public void SetPoisoned(bool value) { poisoned = value; }
+
+    private bool stunned = false;
+    public bool IsStunned() { return stunned; }
+    public void SetStunned(bool value) { stunned = value; }
 
     private string name;
     private int health = 0;
     private int attackPower;
     private int defense;
 
+    private int gold = 0;
+
     private List<Potion> potions = new List<Potion>();
+    public int GetPotionsCount() { return potions.Count; }
 
     public int Health 
     {
@@ -26,6 +42,17 @@ public class Hero
                 health = 100;
             else
                 health = value;
+        }
+    }
+    public int Defense 
+    { 
+        get { return defense; }
+        private set
+        {
+            if (value < 0)
+                defense = 0;
+            else
+                defense = value;
         }
     }
 
@@ -42,8 +69,19 @@ public class Hero
     public void TakeDamage(int damage)
     {
         int damageTaken = Math.Max(damage - defense, 0);
-        Health -= damageTaken;
-        Console.WriteLine($"{name} отримав {damageTaken} шкоди! Здоров'я залишилось: {health}");
+        if (damageTaken == 0)
+        {
+            Console.WriteLine("Герой відбив удар");
+        }
+        else
+        {
+            Health -= damageTaken;
+            Console.WriteLine($"{name} отримав {damageTaken} шкоди! Здоров'я залишилось: {health}");
+        }
+    }
+    public void PoisonDamage(int damage)
+    {
+        Health -= damage;
     }
 
     public void Attack(Enemy enemy)
@@ -56,7 +94,7 @@ public class Hero
 
     public void ShowStatus()
     {
-        Console.WriteLine($"\n{name} - Здоров'я: {health}, Сила атаки: {attackPower}, Захист: {defense}");
+        Console.WriteLine($"\n{name} - Здоров'я: {health} \nСила атаки: {attackPower} \nЗахист: {defense} \nЗолото: {gold}");
     }
 
     public void addPotion(Potion potion)
@@ -92,8 +130,7 @@ public class Hero
                 Console.WriteLine("Ваше здоров'я вже повне. Ви не можете використати зілля зцілення.");
                 return;
             }
-            Health += 50;
-            Console.WriteLine($"{name} використав зілля зцілення і відновив 50 здоров'я. Поточне здоров'я: {health}");
+            potions[index].Use(this);
         }
         else if (potion.GetPotionType() == PotionType.Strength)
         {
@@ -102,8 +139,7 @@ public class Hero
                 Console.WriteLine("Ви вже використали зілля сили. Ефект не може складатися.");
                 return;
             }
-            attackPower += 15;
-            Console.WriteLine($"{name} використав зілля сили і збільшив атаку на 15. Поточна атака: {attackPower}");
+            potions[index].Use(this);
             strengthUsed = true;
         }
         else if (potion.GetPotionType() == PotionType.Defense)
@@ -113,8 +149,7 @@ public class Hero
                 Console.WriteLine("Ви вже використали зілля захисту. Ефект не може складатися.");
                 return;
             }
-            defense += 10;
-            Console.WriteLine($"{name} використав зілля захисту і збільшив захист на 10. Поточний захист: {defense}");
+            potions[index].Use(this);
             defenseUsed = true;
         }
         else
@@ -124,6 +159,24 @@ public class Hero
         }
 
         potions.RemoveAt(index);
+    }
+
+    public void Heal(int amount)
+    {
+        Health += amount;
+        Console.WriteLine($"{name} відновив {amount} здоров'я! Поточне здоров'я: {health}");
+    }
+
+    public void IncreaseAttack(int amount)
+    {
+        attackPower += amount;
+        Console.WriteLine($"{name} збільшив атаку на {amount}! Поточна атака: {attackPower}");
+    }
+
+    public void IncreaseDefense(int amount)
+    {
+        defense += amount;
+        Console.WriteLine($"{name} збільшив захист на {amount}! Поточний захист: {defense}");
     }
 
     public void ResetTemporaryEffects()
@@ -141,4 +194,21 @@ public class Hero
             Console.WriteLine($"{name} втратив ефект зілля захисту. Поточний захист: {defense}");
         }
     }
+
+    public void Victory(Enemy enemy)
+    {
+        Console.WriteLine("Ви перемогли у бою!");
+        GameUtils.ChanceToGetItem(this);
+        monstersDefeated++;
+        int reward = GameUtils.GoldReward(enemy);
+        gold += reward;
+        Console.WriteLine($"Ви отримали {reward} золота!");
+        if (monstersDefeated % 5 == 0)
+        {
+            location++;
+            Console.WriteLine($"Ви просунулись до наступної локації!");
+        }
+    }
+
+    
 }

@@ -5,6 +5,10 @@ namespace mini_RPG;
 public enum EnemyType
 {
     Goblin,
-    Orc,
+    GoblinShaman,
+    Troll,
+    Skeleton,
+    SkeletonArcher,
+    SkeletonGroup,
     Dragon
 }

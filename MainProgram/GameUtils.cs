@@ -6,15 +6,26 @@ public static class GameUtils
 {
     public static Random random = new Random();
 
-    public static Enemy RandomEnemy()
+    public static Enemy ForestRandomEnemy(Hero hero)
     {
+        if ((hero.GetMonstersDefeated() % 4 == 0) && hero.GetMonstersDefeated() != 0)
+            return new Troll();
         int check = random.Next(0, 11);
-        if (check <= 5)
-            return new Goblin("Гоблін", 30, 10, EnemyType.Goblin);
-        else if (check == 10)
-            return new Dragon("Дракон", 100, 30, EnemyType.Dragon);
+        if (check <= 8)
+            return new Goblin();
         else
-            return new Orc("Орк", 50, 20, EnemyType.Orc);
+            return new GoblinShaman();
+    }
+
+    public static Enemy CaveRandomEnemy(Hero hero)
+    {
+        if ((hero.GetMonstersDefeated() % 4 == 0) && hero.GetMonstersDefeated() != 0)
+            return new SkeletonGroup();
+        int check = random.Next(0, 11);
+        if (check <= 8)
+            return new Skeleton();
+        else
+            return new SkeletonArcher();
     }
 
     public static int RandomDamage(int damagePower)
@@ -38,6 +49,43 @@ public static class GameUtils
         return random.Next(minDamage, maxDamage + 1);
     }
 
+    public static int GoldReward(Enemy enemy)
+    {
+        int minGold=0;
+        int maxGold = 0;
+        switch (enemy.GetEnemyType())
+        {
+            case EnemyType.Goblin:
+                minGold = 5;
+                maxGold = 10;
+                break;
+            case EnemyType.GoblinShaman:
+                minGold = 10;
+                maxGold = 20;
+                break;
+            case EnemyType.Troll:
+                minGold = 30;
+                maxGold = 40;
+                break;
+            case EnemyType.Skeleton:
+                minGold = 20;
+                maxGold = 30;
+                break;
+            case EnemyType.SkeletonArcher:
+                minGold = 30;
+                maxGold = 40;
+                break;
+            case EnemyType.SkeletonGroup:
+                minGold = 50;
+                maxGold = 70;
+                break;
+            case EnemyType.Dragon:
+                minGold = 100;
+                maxGold = 200;
+                break;
+        }
+        return random.Next(minGold, maxGold);
+    }
     public static Potion RandomPotion()
     {
         int check = random.Next(0, 11);

@@ -8,4 +8,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Enemies\Forest\" />
+    <Folder Include="Enemies\Mountains\" />
+  </ItemGroup>
+
 </Project>
